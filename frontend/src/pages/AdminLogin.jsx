@@ -1,3 +1,4 @@
+// Pagina de login para admin
 import React, { useState } from "react";
 import { login, setToken } from "../api";
 import { useNavigate } from "react-router-dom";
@@ -13,10 +14,10 @@ export default function AdminLogin() {
     setStatus("Entrando...");
     try {
       const { token } = await login(username, password);
-      setToken(token);
-      nav("/dashboard");
+      setToken(token); // Guarda o token
+      nav("/dashboard"); // Redireciona para o dashboard
     } catch (e) {
-      setStatus("Usuário ou senha incorretos");
+      setStatus("Utilizador ou senha incorretos");
     }
   }
 
@@ -31,7 +32,7 @@ export default function AdminLogin() {
           className="border rounded p-2"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Usuário"
+          placeholder="Utilizador"
         />
         <input
           className="border rounded p-2"

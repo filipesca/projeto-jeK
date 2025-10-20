@@ -10,6 +10,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
+// Funções auxiliares
+
 function getTotalTables() {
   const row = db
     .prepare("SELECT value FROM settings WHERE key=?")
@@ -42,7 +44,18 @@ function pickAvailableTable(datetime) {
   return null;
 }
 
-//verifica mesas disponíveis para um horário
+// Login admin
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === "admin" && password === "1234") {
+    return res.json({
+      token: generateToken({ role: "admin" }, process.env.JWT_SECRET),
+    });
+  }
+  return res.status(401).json({ error: "Credenciais inválidas" });
+});
+
+// Verifica mesas disponíveis para um horário
 app.get("/api/available-tables", (req, res) => {
   const { datetime } = req.query;
   if (!datetime)
@@ -63,23 +76,13 @@ app.get("/api/available-tables", (req, res) => {
   res.json({ available, total });
 });
 
-app.post("/api/login", (req, res) => {
-  const { username, password } = req.body || {};
-  if (username === "admin" && password === "1234") {
-    return res.json({
-      token: generateToken({ role: "admin" }, process.env.JWT_SECRET),
-    });
-  }
-  return res.status(401).json({ error: "Credenciais inválidas" });
-});
-
+// Cria reserva
 app.post("/api/reservations", (req, res) => {
   const { name, phone, datetime, guests, notes, table_number } = req.body || {};
   if (!name || !phone || !datetime || !guests) {
     return res.status(400).json({ error: "Campos obrigatórios ausentes" });
   }
 
-  // funções utilitárias
   function takenTablesAt(dt) {
     const rows = db
       .prepare("SELECT table_number, datetime FROM reservations")
@@ -104,7 +107,6 @@ app.post("/api/reservations", (req, res) => {
     }
     table = tn;
   } else {
-    // auto-atribuição
     const total = getTotalTables();
     const taken = takenTablesAt(datetime);
     for (let t = 1; t <= total; t++) {
@@ -130,12 +132,12 @@ app.post("/api/reservations", (req, res) => {
     .json({ id: info.lastInsertRowid, table_number: table });
 });
 
+// Listar e Cancelar reserva
 app.get("/api/reservations", authMiddleware, (req, res) => {
   res.json(
     db.prepare("SELECT * FROM reservations ORDER BY datetime DESC").all()
   );
 });
-
 app.delete("/api/reservations/:id", authMiddleware, (req, res) => {
   const info = db
     .prepare("DELETE FROM reservations WHERE id = ?")
@@ -145,6 +147,7 @@ app.delete("/api/reservations/:id", authMiddleware, (req, res) => {
   res.json({ ok: true });
 });
 
+// Resumo diario
 app.get("/api/summary", authMiddleware, (req, res) => {
   const { date } = req.query;
   if (!date)
@@ -176,6 +179,7 @@ app.get("/api/summary", authMiddleware, (req, res) => {
   });
 });
 
+// Configuracoes
 app.get("/api/settings", authMiddleware, (req, res) =>
   res.json({ total_tables: getTotalTables() })
 );
@@ -187,5 +191,6 @@ app.put("/api/settings", authMiddleware, (req, res) => {
   res.json({ ok: true, total_tables: n });
 });
 
+// Inicializa o servidor
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Backend on http://localhost:${PORT}`));

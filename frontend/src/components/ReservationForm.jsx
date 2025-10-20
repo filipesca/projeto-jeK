@@ -1,19 +1,28 @@
+// Formulario para criar reservas
 import React, { useEffect, useState } from "react";
 import { createReservation, getAvailableTables } from "../api";
 
 export default function ReservationForm() {
+  // Estado do formulario
   const [form, setForm] = useState({
     name: "",
     phone: "",
     datetime: "",
-    guests: 2,
+    guests: 1,
     notes: "",
     table_number: "auto",
   });
+
+  // Mensagem mostrada abaixo do botao
   const [status, setStatus] = useState(null);
+
+  // Mesas livres para o dia e hora
   const [available, setAvailable] = useState([]);
+
+  // A carregar as mesas
   const [loadingTables, setLoadingTables] = useState(false);
 
+  // Atualiza campos do formulario
   function onChange(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -38,13 +47,16 @@ export default function ReservationForm() {
     })();
   }, [form.datetime]);
 
+  // Submissao do formulário
   async function onSubmit(e) {
     e.preventDefault();
     setStatus("Enviando...");
     try {
       const payload = { ...form };
-      if (payload.table_number === "auto") delete payload.table_number; // deixa backend escolher
+      if (payload.table_number === "auto") delete payload.table_number; // se o cliente escolher auto-atribuicao, deixa backend escolher
       const res = await createReservation(payload);
+
+      // Caso haja sucesso
       setStatus(`Reserva criada! Mesa #${res.table_number}`);
       setForm({
         name: "",
@@ -56,6 +68,7 @@ export default function ReservationForm() {
       });
       setAvailable([]);
     } catch (err) {
+      // Erros do backend chegam como err.message
       setStatus(err.message);
     }
   }
@@ -65,6 +78,7 @@ export default function ReservationForm() {
       onSubmit={onSubmit}
       className="bg-white shadow p-4 rounded-xl grid gap-3"
     >
+      {/* Nome */}
       <div className="grid gap-1">
         <label className="text-sm">Nome</label>
         <input
@@ -75,6 +89,8 @@ export default function ReservationForm() {
           required
         />
       </div>
+
+      {/* Telefone */}
       <div className="grid gap-1">
         <label className="text-sm">Telefone</label>
         <input
@@ -85,6 +101,8 @@ export default function ReservationForm() {
           required
         />
       </div>
+
+      {/* Data e hora */}
       <div className="grid gap-1">
         <label className="text-sm">Data e hora</label>
         <input
@@ -96,6 +114,8 @@ export default function ReservationForm() {
           required
         />
       </div>
+
+      {/* Numero de pessoas */}
       <div className="grid gap-1">
         <label className="text-sm">Pessoas</label>
         <input
@@ -109,6 +129,7 @@ export default function ReservationForm() {
         />
       </div>
 
+      {/* Seleção de mesa */}
       <div className="grid gap-1">
         <label className="text-sm">Mesa</label>
         <select
@@ -125,6 +146,8 @@ export default function ReservationForm() {
             </option>
           ))}
         </select>
+
+        {/* Quando nao ha data/hora ou nao ha mesa */}
         {!form.datetime && (
           <p className="text-xs text-gray-500">
             Escolha a data e hora para ver mesas disponíveis
@@ -137,6 +160,7 @@ export default function ReservationForm() {
         )}
       </div>
 
+      {/* Observacoes */}
       <div className="grid gap-1">
         <label className="text-sm">Observações</label>
         <textarea
@@ -147,9 +171,12 @@ export default function ReservationForm() {
         />
       </div>
 
+      {/* Botao para fazer reserva */}
       <button className="bg-black text-white rounded-lg px-4 py-2">
         Fazer reserva
       </button>
+
+      {/* Mensagem abaixo do botao */}
       {status && <p className="text-sm text-gray-600">{status}</p>}
     </form>
   );

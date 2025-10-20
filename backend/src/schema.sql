@@ -1,3 +1,4 @@
+-- Criação das tabelas
 CREATE TABLE
   IF NOT EXISTS reservations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,6 +13,7 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 
+-- Valor inicial
 INSERT
 OR IGNORE INTO settings (key, value)
 VALUES

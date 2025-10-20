@@ -1,4 +1,7 @@
+// Wrapper de chamadas ao backend. Centraliza URLs, headers e trata de erros
 export const API = "http://localhost:4000/api";
+
+// Auth
 export const setToken = (t) => localStorage.setItem("token", t);
 export const getToken = () => localStorage.getItem("token");
 export async function login(username, password) {
@@ -10,15 +13,8 @@ export async function login(username, password) {
   if (!r.ok) throw new Error("Login falhou");
   return r.json();
 }
-export async function getAvailableTables(datetime) {
-  const url = new URL(`${API}/available-tables`);
-  url.searchParams.set("datetime", datetime);
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Erro ao carregar mesas disponíveis");
-  const data = await res.json();
-  return data.available || [];
-}
 
+// Reservas (cliente)
 export async function createReservation(d) {
   const r = await fetch(`${API}/reservations`, {
     method: "POST",
@@ -28,6 +24,19 @@ export async function createReservation(d) {
   if (!r.ok) throw new Error((await r.json()).error || "Erro ao reservar");
   return r.json();
 }
+
+// Lista mesas livres para um determinado dia e hora
+export async function getAvailableTables(datetime) {
+  const url = new URL(`${API}/available-tables`);
+  url.searchParams.set("datetime", datetime);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Erro ao carregar mesas disponíveis");
+  const data = await res.json();
+  return data.available || [];
+}
+
+// Funcoes admin
+
 export async function listReservations() {
   const t = getToken();
   const r = await fetch(`${API}/reservations`, {

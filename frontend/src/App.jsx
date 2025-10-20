@@ -1,3 +1,5 @@
+// Layout principal e definicao de rotas.
+// Rotas: Home (cliente), Admin (login) e Dashboard (protegida)
 import React from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
@@ -8,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 export default function App() {
   return (
     <div className="min-h-screen">
+      {/* Header com navegacao */}
       <header className="bg-white border-b sticky top-0 z-10">
         <nav className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="font-semibold">
@@ -19,6 +22,8 @@ export default function App() {
           </div>
         </nav>
       </header>
+
+      {/* Area de conteudo trocada pelas rotas */}
       <main className="max-w-4xl mx-auto p-4">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -31,6 +36,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Rota fallback: redireciona para Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

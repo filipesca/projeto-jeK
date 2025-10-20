@@ -1,3 +1,4 @@
+// Painel do admin
 import React, { useEffect, useState } from "react";
 import {
   listReservations,
@@ -7,6 +8,7 @@ import {
   setSettings,
 } from "../api";
 
+// Formata data e hora
 function formatDT(iso) {
   const d = new Date(iso);
   return d.toLocaleString();
@@ -18,6 +20,7 @@ export default function Dashboard() {
   const [totalTables, setTotalTables] = useState(10);
   const today = new Date().toISOString().slice(0, 10);
 
+  // Carrega dados iniciais
   async function load() {
     const [resv, sum, st] = await Promise.all([
       listReservations(),
@@ -33,11 +36,13 @@ export default function Dashboard() {
     load();
   }, []);
 
+  // Cancela uma reserva
   async function onDelete(id) {
     await deleteReservation(id);
     await load();
   }
 
+  // Salva o total de mesas
   async function onSaveSettings() {
     await setSettings(Number(totalTables));
     await load();
@@ -45,6 +50,7 @@ export default function Dashboard() {
 
   return (
     <div className="grid gap-6">
+      {/* Resumo de hoje */}
       <section className="grid gap-2">
         <h2 className="text-lg font-semibold">Resumo de hoje</h2>
         {summary && (
@@ -77,6 +83,7 @@ export default function Dashboard() {
         )}
       </section>
 
+      {/* Configuracoes */}
       <section className="grid gap-3">
         <h2 className="text-lg font-semibold">Configurações</h2>
         <div className="bg-white shadow rounded-xl p-4 flex items-end gap-2 w-full max-w-sm">
@@ -100,6 +107,7 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Tabela de reservas */}
       <section className="grid gap-3">
         <h2 className="text-lg font-semibold">Reservas</h2>
         <div className="bg-white shadow rounded-xl overflow-hidden">

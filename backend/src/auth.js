@@ -1,7 +1,12 @@
+// Autenticação usando JWT
 import jwt from "jsonwebtoken";
+
+// Gera token JWT com validade de 7 dias
 export function generateToken(payload, secret) {
   return jwt.sign(payload, secret, { expiresIn: "7d" });
 }
+
+// Middleware para proteger rotas
 export function authMiddleware(req, res, next) {
   const auth = req.headers.authorization || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
