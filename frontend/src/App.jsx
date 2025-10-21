@@ -14,7 +14,7 @@ export default function App() {
       <header className="bg-white border-b sticky top-0 z-10">
         <nav className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="font-semibold">
-            Couraça – Reservas
+            Couraça - Reservas
           </Link>
           <div className="flex gap-4 text-sm">
             <Link to="/">Cliente</Link>
