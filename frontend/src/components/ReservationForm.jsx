@@ -8,7 +8,7 @@ export default function ReservationForm() {
     name: "",
     phone: "",
     datetime: "",
-    guests: 1,
+    guests: 2,
     notes: "",
     table_number: "auto",
   });
