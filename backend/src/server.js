@@ -15,7 +15,7 @@ app.use(morgan("dev"));
 function getTotalTables() {
   const row = db
     .prepare("SELECT value FROM settings WHERE key=?")
-    .get("total_tables");
+  .get("total_tables");
   return parseInt(row?.value || "10", 10);
 }
 function setTotalTables(n) {
