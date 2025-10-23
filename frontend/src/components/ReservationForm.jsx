@@ -155,7 +155,7 @@ export default function ReservationForm() {
         )}
         {form.datetime && !loadingTables && available.length === 0 && (
           <p className="text-xs text-red-600">
-            Sem mesas disponíveis neste horáriop
+            Sem mesas disponíveis neste horário
           </p>
         )}
       </div>
