@@ -28,21 +28,6 @@ function isOverlap(dt1, dt2) {
     b = new Date(dt2).getTime();
   return Math.abs(a - b) < 60 * 60 * 1000;
 }
-function pickAvailableTable(datetime) {
-  const total = getTotalTables();
-  const rows = db
-    .prepare("SELECT table_number, datetime FROM reservations")
-    .all();
-  const taken = new Set(
-    rows
-      .filter((r) => isOverlap(r.datetime, datetime))
-      .map((r) => r.table_number)
-  );
-  for (let t = 1; t <= total; t++) {
-    if (!taken.has(t)) return t;
-  }
-  return null;
-}
 
 // Login admin
 app.post("/api/login", (req, res) => {
